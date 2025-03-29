@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "id": "1742912629460",
+      "username": "凉冰",
+      "password": "$2a$10$LI3edqRR7WYqmKrK0cq4XuAeVoTf0xCtIfYSPZdjJ476VVJy/PNHu",
+      "createdAt": "2025-03-25T14:23:49.460Z"
+    },
+    {
+      "id": "1743174429176",
+      "username": "南宫婉",
+      "password": "$2a$10$Onvk2AMnOKOLctol67cxsusVk.d56L5rDIBVg4jM0M4nBHgHf8W2G",
+      "createdAt": "2025-03-28T15:07:09.176Z"
+    }
+  ]
+}
