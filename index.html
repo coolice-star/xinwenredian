@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>热搜榜单 | AI图文生成</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 添加meta标签防止跨域问题 -->
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <!-- 加载身份验证脚本 -->
+    <script src="auth.js"></script>
+    <script>
+        // 页面加载时检查登录状态
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth(); // 如果未登录，将重定向到登录页面
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="header-top">
+                    <h1>今日热搜榜单</h1>
+                    <div class="user-actions" id="userActions">
+                        <a href="login.html" class="auth-link" id="loginBtn">登录</a>
+                        <a href="register.html" class="auth-link register" id="registerBtn">注册</a>
+                    </div>
+                </div>
+                <p class="subtitle">点击任意热搜，AI将为您生成相关图文</p>
+                <div class="date-display" id="currentDate"></div>
+            </div>
+        </header>
+
+        <main>
+            <div class="hot-search-container">
+                <div class="platform-tabs">
+                    <button class="tab-btn active" data-platform="weibo">
+                        <i class="fab fa-weibo"></i> 微博热搜
+                    </button>
+                    <button class="tab-btn" data-platform="zhihu">
+                        <i class="fa-solid fa-circle-question"></i> 知乎热榜
+                    </button>
+                    <button class="tab-btn" data-platform="baidu">
+                        <i class="fa-brands fa-baidu"></i> 百度热搜
+                    </button>
+                </div>
+                
+                <div class="hot-search-list" id="hotSearchList">
+                    <!-- 热搜内容将通过JS动态加载 -->
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>正在加载热搜数据...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-generation" id="contentGeneration">
+                <div class="empty-state">
+                    <i class="fa-solid fa-robot"></i>
+                    <h2>AI图文生成</h2>
+                    <p>从左侧选择一条热搜，AI将为您生成相关图文内容</p>
+                    <div class="ai-features">
+                        <div class="ai-feature">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>智能分析热搜内容</span>
+                        </div>
+                        <div class="ai-feature">
+                            <i class="fa-solid fa-image"></i>
+                            <span>自动生成相关图片</span>
+                        </div>
+                        <div class="ai-feature">
+                            <i class="fa-solid fa-pen-fancy"></i>
+                            <span>生成专业新闻文章</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- AI生成的内容将显示在这里 -->
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2024 热搜榜单 | AI图文生成 | 数据更新时间: <span id="updateTime"></span></p>
+            <p class="api-notice">数据来源: 微博、知乎和百度公开API | 图片来源: Unsplash | 文本由AI生成</p>
+        </footer>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <div class="modal-body" id="modalBody">
+                <!-- 模态框内容 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

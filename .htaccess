@@ -1,0 +1,5 @@
+DirectoryIndex welcome.html index.html
+
+# 重定向规则：如果用户直接访问根目录，跳转到welcome.html
+RewriteEngine On
+RewriteRule ^$ welcome.html [L] 

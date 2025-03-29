@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 | 热搜榜单</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <!-- 加载身份验证脚本 -->
+    <script src="auth.js"></script>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>创建账号</h1>
+                <p>注册新账号以体验热搜榜单全部功能</p>
+            </div>
+            
+            <form class="auth-form" id="registerForm">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> 用户名</label>
+                    <input type="text" id="username" name="username" placeholder="请输入用户名" required>
+                    <div class="input-feedback" id="usernameFeedback"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> 密码</label>
+                    <div class="password-input">
+                        <input type="password" id="password" name="password" placeholder="请设置密码" required>
+                        <button type="button" class="toggle-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-meter">
+                            <div class="strength-bar"></div>
+                        </div>
+                        <span class="strength-text">密码强度</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword"><i class="fas fa-lock"></i> 确认密码</label>
+                    <div class="password-input">
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="请再次输入密码" required>
+                        <button type="button" class="toggle-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-agreement">
+                    <input type="checkbox" id="agreement" name="agreement" required>
+                    <label for="agreement">我已阅读并同意<a href="#">用户协议</a>和<a href="#">隐私政策</a></label>
+                </div>
+                
+                <button type="submit" class="auth-button">注册</button>
+                
+                <div id="register-feedback" class="auth-feedback"></div>
+            </form>
+            
+            <div class="auth-footer">
+                <p>已有账号? <a href="login.html">立即登录</a></p>
+                <a href="index.html" class="back-home" id="backHomeBtn"><i class="fas fa-home"></i> 返回首页</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API地址配置
+        const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'http://localhost:3000/api'
+            : `${window.location.origin}/api`;
+
+        // 修改"返回首页"按钮的行为
+        document.getElementById('backHomeBtn').addEventListener('click', function(e) {
+            // 检查用户是否已登录
+            if (!checkAuth(false)) {
+                e.preventDefault();
+                alert('请先登录才能访问首页');
+                return false;
+            }
+        });
+
+        // 切换密码可见性
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function() {
+                const passwordInput = this.parentElement.querySelector('input');
+                const icon = this.querySelector('i');
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        });
+
+        // 密码强度检测
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            // 简单的密码强度计算规则
+            if (password.length >= 8) strength += 1;
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            const strengthBar = document.querySelector('.strength-bar');
+            const strengthText = document.querySelector('.strength-text');
+            
+            // 根据强度设置样式
+            switch(strength) {
+                case 0:
+                    strengthBar.style.width = '0%';
+                    strengthBar.style.backgroundColor = '#e74c3c';
+                    strengthText.textContent = '密码强度: 非常弱';
+                    break;
+                case 1:
+                    strengthBar.style.width = '25%';
+                    strengthBar.style.backgroundColor = '#e74c3c';
+                    strengthText.textContent = '密码强度: 弱';
+                    break;
+                case 2:
+                    strengthBar.style.width = '50%';
+                    strengthBar.style.backgroundColor = '#f39c12';
+                    strengthText.textContent = '密码强度: 中等';
+                    break;
+                case 3:
+                    strengthBar.style.width = '75%';
+                    strengthBar.style.backgroundColor = '#3498db';
+                    strengthText.textContent = '密码强度: 强';
+                    break;
+                case 4:
+                    strengthBar.style.width = '100%';
+                    strengthBar.style.backgroundColor = '#2ecc71';
+                    strengthText.textContent = '密码强度: 非常强';
+                    break;
+            }
+        });
+
+        // 用户名输入验证
+        document.getElementById('username').addEventListener('blur', async function() {
+            const username = this.value.trim();
+            const feedback = document.getElementById('usernameFeedback');
+            
+            if (username.length < 3) {
+                feedback.textContent = '用户名至少需要3个字符';
+                feedback.className = 'input-feedback error';
+                return;
+            }
+            
+            try {
+                // 调用API检查用户名是否可用
+                const response = await fetch(`${API_BASE_URL}/check-username`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.available) {
+                    feedback.textContent = '用户名可用';
+                    feedback.className = 'input-feedback success';
+                } else {
+                    feedback.textContent = '该用户名已被使用';
+                    feedback.className = 'input-feedback error';
+                }
+            } catch (error) {
+                console.error('检查用户名出错:', error);
+                feedback.textContent = '无法验证用户名，请稍后再试';
+                feedback.className = 'input-feedback error';
+            }
+        });
+
+        // 表单提交
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // 获取表单数据
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const agreement = document.getElementById('agreement').checked;
+            const feedbackElement = document.getElementById('register-feedback');
+            
+            // 验证两次密码是否一致
+            if (password !== confirmPassword) {
+                feedbackElement.textContent = '注册失败：两次输入的密码不一致';
+                feedbackElement.className = 'auth-feedback error';
+                return;
+            }
+            
+            // 验证是否勾选协议
+            if (!agreement) {
+                feedbackElement.textContent = '注册失败：请先阅读并同意用户协议和隐私政策';
+                feedbackElement.className = 'auth-feedback error';
+                return;
+            }
+
+            // 显示注册中状态
+            feedbackElement.textContent = '注册中...';
+            feedbackElement.className = 'auth-feedback info';
+            
+            try {
+                // 调用注册API
+                const response = await fetch(`${API_BASE_URL}/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // 注册成功
+                    feedbackElement.textContent = '注册成功！即将跳转到登录页面...';
+                    feedbackElement.className = 'auth-feedback success';
+                    
+                    // 3秒后跳转到登录页面
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 3000);
+                } else {
+                    // 注册失败
+                    feedbackElement.textContent = `注册失败：${data.message || '服务器错误'}`;
+                    feedbackElement.className = 'auth-feedback error';
+                }
+            } catch (error) {
+                console.error('注册请求出错:', error);
+                feedbackElement.textContent = '注册失败：无法连接到服务器，请稍后再试';
+                feedbackElement.className = 'auth-feedback error';
+            }
+        });
+
+        // 页面加载时检查登录状态，如果已登录则跳转到首页
+        window.addEventListener('load', function() {
+            const user = getCurrentUser();
+            if (user) {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html> 
