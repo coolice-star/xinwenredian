@@ -1,0 +1,14 @@
+   # 初始化Git仓库
+   git init
+   
+   # 添加所有文件
+   git add .
+   
+   # 提交代码
+   git commit -m "初始提交 - 准备部署"
+   
+   # 连接到你的GitHub仓库（替换YOUR_USERNAME和YOUR_REPO）
+   git remote add origin https://github.com/coolice-star/xinwenredian.git
+   
+   # 推送代码
+   git push -u origin main
