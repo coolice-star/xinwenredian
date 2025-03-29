@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欢迎访问热搜榜单 | AI图文生成</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <!-- 加载身份验证脚本 -->
+    <script src="auth.js"></script>
+    <style>
+        .welcome-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .welcome-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 3rem;
+            max-width: 800px;
+            box-shadow: var(--card-shadow);
+            color: var(--text-color);
+            animation: fadeIn 0.8s ease;
+        }
+        
+        .welcome-logo {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .welcome-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-color);
+        }
+        
+        .welcome-description {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            color: var(--light-text);
+        }
+        
+        .welcome-features {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        
+        .welcome-feature {
+            flex: 0 0 200px;
+            background-color: rgba(67, 97, 238, 0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+        
+        .welcome-feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .welcome-feature i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+        
+        .welcome-feature h3 {
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+        
+        .welcome-actions {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .welcome-btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .welcome-btn.primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+        
+        .welcome-btn.primary:hover {
+            background-color: #e4254a;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(255, 56, 92, 0.3);
+        }
+        
+        .welcome-btn.secondary {
+            background-color: white;
+            color: var(--secondary-color);
+            border: 2px solid var(--secondary-color);
+        }
+        
+        .welcome-btn.secondary:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(67, 97, 238, 0.3);
+        }
+        
+        .welcome-btn i {
+            margin-right: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-card {
+                padding: 2rem;
+            }
+            
+            .welcome-features {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .welcome-feature {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .welcome-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-container">
+        <div class="welcome-card">
+            <div class="welcome-logo">
+                <i class="fas fa-fire-alt"></i>
+            </div>
+            <h1 class="welcome-title">欢迎使用热搜榜单</h1>
+            <p class="welcome-description">
+                热搜榜单是一款集成了微博、知乎和百度热搜的综合平台，结合AI技术为您生成相关热点的图文内容，让您轻松了解最新热点事件。
+            </p>
+            
+            <div class="welcome-features">
+                <div class="welcome-feature">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>实时热搜</h3>
+                    <p>实时聚合各大平台热搜榜，让您一站式了解热门话题</p>
+                </div>
+                <div class="welcome-feature">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI图文生成</h3>
+                    <p>基于人工智能生成高质量的热点内容解析和相关图片</p>
+                </div>
+                <div class="welcome-feature">
+                    <i class="fas fa-user-shield"></i>
+                    <h3>个人账户</h3>
+                    <p>注册专属账户，保存您的浏览偏好和历史记录</p>
+                </div>
+            </div>
+            
+            <p class="welcome-description">
+                开始使用前，您需要先登录或注册一个账户。
+            </p>
+            
+            <div class="welcome-actions">
+                <a href="login.html" class="welcome-btn primary">
+                    <i class="fas fa-sign-in-alt"></i> 登录
+                </a>
+                <a href="register.html" class="welcome-btn secondary">
+                    <i class="fas fa-user-plus"></i> 注册新账户
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载时检查登录状态
+        window.addEventListener('load', function() {
+            // 检查用户是否已登录
+            const user = getCurrentUser();
+            
+            // 如果已登录，则直接跳转到首页
+            if (user) {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html> 
