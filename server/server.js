@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 
 // 中间件配置
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5500', 'https://your-render-app-name.onrender.com'],
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5500', 'https://xinwenredian.onrender.com'],
   methods: ['GET', 'POST'],
   credentials: true
 })); // 允许跨域请求
