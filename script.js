@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // API地址配置
+    window.API_BASE_URL = 'https://xinwenredian.onrender.com/api';
+    
     // 初始化日期和时间显示
     updateDateTime();
     
@@ -300,65 +303,74 @@ function renderHotSearchList(data, platform) {
 
 // 生成AI内容
 async function generateContent(title, platform) {
-    const contentGeneration = document.getElementById('contentGeneration');
-    
-    // 显示生成中状态
-    contentGeneration.innerHTML = `
-        <div class="generating">
-            <h3>正在为您生成"${title}"的相关图文</h3>
-            <div class="progress-bar">
-                <div class="progress"></div>
-            </div>
-            <p>AI正在分析热搜内容，请稍候...</p>
+    // 显示加载状态
+    document.getElementById('contentGeneration').innerHTML = `
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>AI正在分析"${title}"相关新闻，请稍候...</p>
         </div>
     `;
     
-    // 开始进度条动画
-    const progressBar = document.querySelector('.progress');
-    let progress = 0;
-    const progressInterval = setInterval(() => {
-        progress += 1;
-        if (progress > 95) {
-            clearInterval(progressInterval);
-        }
-        progressBar.style.width = `${progress}%`;
-    }, 100);
-    
     try {
-        // 生成一个随机图片URL
-        const randomImageNumber = Math.floor(Math.random() * 10) + 1;
-        const imageUrl = `https://source.unsplash.com/random/800x450?${encodeURIComponent(title)}&sig=${randomImageNumber}`;
+        // 在生产环境中这里应该调用真实的AI生成API
+        // 为了演示，这里使用本地模拟的内容
+        let content;
         
-        // 生成更智能的本地内容
-        const generatedContent = generateLocalContent(title, platform);
+        // 如果是开发环境，使用本地模拟内容
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            content = await generateLocalContent(title, platform);
+        } else {
+            // 生产环境中调用真实API
+            // 这里应该替换为实际的API调用
+            content = await fetchAIGeneratedContent(title, platform);
+        }
         
-        // 清除进度条定时器
-        clearInterval(progressInterval);
-        progressBar.style.width = '100%';
-        
-        // 添加图片到生成的内容
-        generatedContent.imageUrl = imageUrl;
-        
-        renderGeneratedContent(generatedContent);
+        // 渲染生成的内容
+        renderGeneratedContent(content);
     } catch (error) {
-        console.error('内容生成过程中出现错误:', error);
+        console.error('生成内容失败:', error);
+        document.getElementById('contentGeneration').innerHTML = `
+            <div class="error-state">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p>AI内容生成失败，请稍后再试</p>
+                <button class="retry-btn" onclick="generateContent('${title}', '${platform}')">
+                    <i class="fa-solid fa-rotate"></i> 重试
+                </button>
+            </div>
+        `;
+    }
+}
+
+// 从API获取AI生成的内容
+async function fetchAIGeneratedContent(title, platform) {
+    try {
+        // 调用后端API生成内容
+        const response = await fetch(`${window.API_BASE_URL}/generate-content`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title,
+                platform
+            })
+        });
         
-        // 清除进度条定时器
-        clearInterval(progressInterval);
+        if (!response.ok) {
+            throw new Error(`服务器响应错误: ${response.status} ${response.statusText}`);
+        }
         
-        // 使用最基础的备用内容
-        const basicContent = {
-            title: title,
-            imageUrl: `https://source.unsplash.com/random/800x450?sig=${Math.floor(Math.random() * 100)}`,
-            text: `
-                <p>很抱歉，无法生成"${title}"的相关内容。</p>
-                <p>请检查您的网络连接，或稍后再试。</p>
-            `,
-            isBackup: true,
-            isError: true
-        };
+        const data = await response.json();
         
-        renderGeneratedContent(basicContent);
+        if (!data.success) {
+            throw new Error(data.message || '生成内容失败');
+        }
+        
+        return data.content;
+    } catch (error) {
+        console.error('获取AI生成内容失败:', error);
+        // 如果API调用失败，返回本地模拟内容
+        return getMockGeneratedContent(title, platform);
     }
 }
 

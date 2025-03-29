@@ -1,5 +1,8 @@
 // 身份验证相关的公共函数
 
+// 后端API基础地址
+const AUTH_API_URL = 'https://xinwenredian.onrender.com/api';
+
 /**
  * 检查用户是否已登录
  * @returns {Object|null} 返回用户对象或null(未登录)
